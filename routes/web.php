@@ -52,8 +52,8 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix'=>'admin', 'middleware'=>['admin:admin']], function(){
-    Route::get('/sahira/login', [AdminController::class, 'loginForm']);
-    Route::post('/sahira/login', [AdminController::class, 'store'])->name('admin.login');
+    Route::get('/mantap/admin/login', [AdminController::class, 'loginForm']);
+    Route::post('/mantap/admin/login', [AdminController::class, 'store'])->name('admin.login');
 });
 
 Route::middleware(['auth:admin'])->group(function(){
@@ -134,7 +134,12 @@ Route::middleware(['auth:admin'])->group(function(){
         Route::get('/multiimg/delete/{id}', [ProductController::class, 'MultiImageDelete'])->name('product-multiimg-delete');
         Route::get('/inactive/{id}', [ProductController::class, 'ProductInactive'])->name('product-inactive');
         Route::get('/active/{id}', [ProductController::class, 'ProductActive'])->name('product-active');
-        Route::get('/delete/{id}', [ProductController::class, 'ProductDelete'])->name('product-delete');    
+        Route::get('/delete/{id}', [ProductController::class, 'ProductDelete'])->name('product-delete');  
+        
+        
+        Route::post('/sizing/update', [ProductController::class, 'SizingUpdate'])->name('update-product-sizing');
+        Route::post('/sizing/store', [ProductController::class, 'StoreSizing'])->name('sizing-store');
+        Route::get('/sizing/delete/{id}', [ProductController::class, 'SizingDelete'])->name('sizing-delete');
 
         // Route::post('/size/update', [ProductController::class, 'SizeUpdate'])->name('update-size');
         // Route::get('/size/delete/{id}', [ProductController::class, 'sizeDelete'])->name('product-size-delete');

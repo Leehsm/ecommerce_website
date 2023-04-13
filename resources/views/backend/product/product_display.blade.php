@@ -126,38 +126,11 @@
 
                             {{-- 3RD ROW --}}
                             <div class="row">
-
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <h5>Product size <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="product_size_en" class="form-control"  data-role="tagsinput" required="" value="{{ $size }}" readonly> 
-                                            @error('product_size_en')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                            
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <h5>Product Quantity <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="product_qty" class="form-control" data-role="tagsinput" required="" value="{{ $quantity }}" readonly> 
-                                            @error('product_qty')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                            
-                                    </div>
-                                </div>
-
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <h5>Product Color <span class="text-danger">*</span></h5>
                                         <div class="controls">
-                                            <input type="text" name="product_color_en" class="form-control" data-role="tagsinput" required="" value="{{ $products->product_color_en }}" readonly> 
+                                            <input type="text" name="product_color_en" class="form-control"required="" value="{{ $products->product_color_en }}" readonly> 
                                             @error('product_color_en')
                                             <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -344,6 +317,53 @@
 
     </section>
     <!-- /.content -->
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+               <div class="box bt-3 border-info">
+                    <div class="box-header">
+                        <h4 class="box-title">Sizing <strong>Details</strong></h4>
+                    </div>
+
+                    @foreach ($size as $sizes)
+                    <form method="post" action="{{ route('update-product-sizing') }}" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="id" class="form-control" value="{{ $sizes->id }}">
+                        <input type="hidden" name="product_id" class="form-control" value="{{ $products->id }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>Product size <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="product_size_en" class="form-control" value="{{ $sizes->size_type }}" readonly> 
+                                        @error('product_size_en')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                        
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>Product Quantity <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="product_qty" class="form-control" required="" value="{{ $sizes->quantity }}" readonly> 
+                                        @error('product_qty')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                        
+                                </div>
+                            </div>
+                        </div>
+                    </form>	
+                    @endforeach
+               </div>
+            </div>
+        </div> <!-- // end row  -->
+    </section>
 
     <!-- ///////////////// Start Multiple Image Update Area ///////// -->
     <section class="content">

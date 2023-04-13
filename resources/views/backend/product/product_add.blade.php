@@ -149,7 +149,7 @@
                                     <div class="form-group">
                                         <h5>Product Color <span class="text-danger">*</span></h5>
                                         <div class="controls">
-                                            <input type="text" name="product_color_en" class="form-control"  data-role="tagsinput" > 
+                                            <input type="text" name="product_color_en" class="form-control" > 
                                             @error('product_color_en')
                                             <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -340,8 +340,7 @@
     <!-- /.box -->
 
     </section>
-    <!-- /.content -->
-    
+    <!-- /.content -->    
 </div>
 
 <script type="text/javascript">

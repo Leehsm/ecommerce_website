@@ -43,7 +43,6 @@ class ProductController extends Controller
         }
         
         // dd($image2);
-=======
         $name_gen2 = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
 
         Image::make($image)->resize(917,1000)->save('upload/products/thumbnail/'.$name_gen);
@@ -51,7 +50,6 @@ class ProductController extends Controller
 
         $save_url = 'upload/products/thumbnail/'.$name_gen;
         $save_url2 = 'upload/products/sizeChart/'.$name_gen;
->>>>>>> parent of 1f37d31... Merge branch 'master' into Development
 
         $product_id = Product::insertGetId([
             'brand_id' => $request->brand_id,
@@ -146,10 +144,12 @@ class ProductController extends Controller
 		$subcategory = SubCategory::latest()->get();
 		$subsubcategory = SubSubCategory::latest()->get();
 		$products = Product::findOrFail($id);
-        $size = Size::where('product_id',$id)->get('size_type');
-        $quantity = Size::where('product_id',$id)->get('quantity'); //->implode(',', all())
+        $sizeCount = Size::where('product_id',$id)->get('size_type')->count();
+        $size = Size::where('product_id',$id)->get();
+        // $quantity = Size::where('product_id',$id)->get('quantity'); //->implode(',', all())
         $multiImgs = MultiImg::where('product_id',$id)->get();
-		return view('backend.product.product_edit',compact('categories','brands','subcategory','subsubcategory','products','size','quantity','multiImgs'));
+        // dd($size);
+		return view('backend.product.product_edit',compact('categories','brands','subcategory','subsubcategory','products','sizeCount', 'size','multiImgs'));
 
     }
 
@@ -160,11 +160,12 @@ class ProductController extends Controller
 		$subcategory = SubCategory::latest()->get();
 		$subsubcategory = SubSubCategory::latest()->get();
 		$products = Product::findOrFail($id);
-        $size = Size::where('product_id',$id)->get('size_type');
-        $quantity = Size::where('product_id',$id)->get('quantity'); //->implode(',', all())
+        $sizeCount = Size::where('product_id',$id)->get('size_type')->count();
+        $size = Size::where('product_id',$id)->get();
+        // $quantity = Size::where('product_id',$id)->get('quantity'); //->implode(',', all())
         $multiImgs = MultiImg::where('product_id',$id)->get();
 
-		return view('backend.product.product_display',compact('categories','brands','subcategory','subsubcategory','products','size','quantity','multiImgs'));
+		return view('backend.product.product_display',compact('categories','brands','subcategory','subsubcategory','products','size','multiImgs'));
 
     }
 
@@ -208,19 +209,13 @@ class ProductController extends Controller
             'created_at' => Carbon::now(),   
         ]);
 
-        // $quantity = explode(',',$request->product_qty);
-        // $size = explode(',', $request->product_size_en);
-        // // dd($size);
-        // $prod_id = $product_id;
+        // $sizeCount = Size::where('product_id',$id)->get('size_type')->count();
 
-        // $arrayCount = max(count($quantity), count($size));
-
-        // for ($i = 0; $i < $arrayCount; $i++) {
+        // for ($i = 0; $i < $sizeCount; $i++) {
         //     if(isset($size[$i])) {
-        //         $size_id = Size::insertGetId([
-        //             'product_id' => $product_id,
-        //             'Size_type' => $size[$i],
-        //             'quantity' => $quantity[$i],
+        //         $size_id = Size::where('id',$id)->update([
+        //             'Size_type' => $request->product_size_en[$i],
+        //             'quantity' => $request->product_qty[$i],
         //         ]);
         //     }
         // }
@@ -386,6 +381,54 @@ class ProductController extends Controller
 
         $notification = array(
            'message' => 'Product Deleted Successfully',
+           'alert-type' => 'success'
+       );
+
+       return redirect()->back()->with($notification);
+
+    }
+
+    public function SizingUpdate(Request $request){
+        
+        // dd(Size::where('product_id', $request->product_id)->get());
+        Size::where('product_id', $request->product_id)->where('id',$request->id)->update([
+                        'size_type' => $request->product_size_en,
+                        'quantity' => $request->product_qty,
+                    ]);
+
+        $notification = array(
+            'message' => 'Product Size Updated Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+
+    }
+
+    public function StoreSizing(Request $request){
+        
+        $product_id = $request->product_id;
+        // dd($product_id);
+
+        $size_id = Size::insertGetId([
+            'product_id' => $product_id,
+            'Size_type' => $request->product_size_en,
+            'quantity' => $request->product_qty,
+            'updated_at' => Carbon::now(),
+            'created_by' => 1,
+        ]);
+        $notification = array(
+            'message' => 'Product Size Added Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    }
+
+    public function SizingDelete($id){
+        $size = Size::findOrFail($id)->delete();
+
+        $notification = array(
+           'message' => 'Product Sizing Deleted Successfully',
            'alert-type' => 'success'
        );
 
