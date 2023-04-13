@@ -123,40 +123,13 @@
                                 </div>
                             </div>
 
-                            {{-- 3RD ROW --}}
+                            {{-- 3RD ROW --}}                               
                             <div class="row">
-                                
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <h5>Product size <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="product_size_en" class="form-control"  data-role="tagsinput" value="{{ $size }}"> 
-                                            @error('product_size_en')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                            
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <h5>Product Quantity <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="product_qty" class="form-control" data-role="tagsinput" required="" value="{{ $quantity }}"> 
-                                            @error('product_qty')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                            
-                                    </div>
-                                </div>
-
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <h5>Product Color <span class="text-danger">*</span></h5>
                                         <div class="controls">
-                                            <input type="text" name="product_color_en" class="form-control" data-role="tagsinput"  value="{{ $products->product_color_en }}"> 
+                                            <input type="text" name="product_color_en" class="form-control"  value="{{ $products->product_color_en }}"> 
                                             @error('product_color_en')
                                             <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -309,63 +282,100 @@
     <!-- /.content -->
 
 
-    {{-- <section class="content">
+    <section class="content">
         <div class="row">
             <div class="col-md-12">
                <div class="box bt-3 border-info">
                     <div class="box-header">
-                        <h4 class="box-title">Product Sizing and Quantity <strong>Update</strong></h4>
+                        <h4 class="box-title">Sizing <strong>Update</strong></h4>
                     </div>
 
-                    <form method="post" action="{{ route('update-size') }}" enctype="multipart/form-data">
+                    @foreach ($size as $sizes)
+                    <form method="post" action="{{ route('update-product-sizing') }}" enctype="multipart/form-data">
                         @csrf
-                        <div class="row row-sm">
-                            @foreach($size as $sizes)
-                                <input type="hidden" name="id" value="{{ $sizes->id }}">
-                                <input type="hidden" name="prod_id" value="{{ $sizes->product_id }}">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <h5>Product size <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="product_size" class="form-control" value="{{ $sizes->size_type }}"> 
-                                            @error('product_size_en')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                            
+                        <input type="hidden" name="id" class="form-control" value="{{ $sizes->id }}">
+                        <input type="hidden" name="product_id" class="form-control" value="{{ $products->id }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>Product size <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="product_size_en" class="form-control" value="{{ $sizes->size_type }}"> 
+                                        @error('product_size_en')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
+                                        
                                 </div>
+                            </div>
 
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <h5>Product Quantity <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="product_qty" class="form-control" required="" value="{{ $sizes->quantity }}"> 
-                                            @error('product_qty')
-                                            <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>Product Quantity <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="product_qty" class="form-control" required="" value="{{ $sizes->quantity }}"> 
+                                        @error('product_qty')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
+                                        
                                 </div>
+                            </div>
 
-                                <div class="col-md-4">
-                                    <br>
-                                    <div class="form-group">
-                                        <a href="{{ route('product-size-delete',$sizes->id) }}" class="btn btn-sm btn-danger" id="delete" title="Delete Data"><i class="fa fa-trash"></i> </a>
-                                    </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5> <span class="text-danger">*</span></h5>
+                                    <input type="submit" class="btn btn-rounded btn-primary mb-5" value="Update">
+                                    <a href="{{ route('sizing-delete',$sizes->id) }}" class="btn btn-rounded btn-danger mb-5" title="Delete Data" id="delete"><i class="fa fa-trash"></i></a>
                                 </div>
-                            @endforeach
-                        </div>			
-                        <div class="text-xs-right">
-                            <input type="submit" class="btn btn-rounded btn-primary mb-5" value="Update Sizing And Quantity">
+                            </div>
                         </div>
-                        <br><br>
                     </form>	
+                    @endforeach
+                    
+                    <form method="post" action="{{ route('sizing-store') }}">
+                        @csrf
+                        <div class="row">
+                            <input type="hidden" name="product_id" class="form-control" value={{  $products->id }}> 
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>Product size <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="product_size_en" class="form-control" required=""> 
+                                        @error('product_size_en')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>                                    
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>Product Quantity <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="product_qty" class="form-control" required=""> 
+                                        @error('product_qty')
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                        
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5> <span class="text-danger">*</span></h5>
+                                    <input type="submit" class="btn btn-rounded btn-primary mb-5" value="Add New">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                </div>
             </div>
         </div> <!-- // end row  -->
-    </section> --}}
+    </section>
+
+
 
 
     <!-- ///////////////// Start Multiple Image Update Area ///////// -->
