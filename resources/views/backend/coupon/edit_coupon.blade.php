@@ -37,6 +37,15 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <h5>Minimun Spend <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="min_spend" class="form-control" value="{{ $coupons->min_spend }}" >
+                                        @error('min_spend') 
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror 
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <h5>Coupon Validity Date  <span class="text-danger">*</span></h5>
                                     <div class="controls">
                                         <input type="date" name="coupon_validity" class="form-control" min="{{ Carbon\Carbon::now()->format('Y-m-d') }}" value="{{ $coupons->coupon_validity }}">
