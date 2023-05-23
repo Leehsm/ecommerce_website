@@ -25,6 +25,27 @@ class ToyyibpayController extends Controller
 {
     public function FPXCreateBill(Request $request){
 
+        // STOCK CHECK
+        $carts = Cart::content();
+        // $arrayCount = count($carts);
+        // dd($carts);
+        foreach ($carts as $cart) {
+            // $rowIds[] = $cart->qty;
+            $totalQty = Size::where('product_id',$cart->id)->where('size_type',$cart->options->size)->pluck('quantity')->first();
+            $quantity = $cart->qty;
+            // dd($totalQty , $quantity);
+
+            if($totalQty < $quantity){
+                $notification = array(
+                    'message' => 'Sorry, we cant continue to Payment. Some selected product exceed limit in stock',
+                    'alert-type' => 'error'
+                    );
+
+                    return redirect()->route('mycart')->with($notification);
+            }
+        }
+        // dd($totalQty , $quantity);
+
         $billExtRef = 'SSRefNO'.mt_rand(10000000,99999999); 
         // dd(request('billcode'));
         // dd($request->district_id);

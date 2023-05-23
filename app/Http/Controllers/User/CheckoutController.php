@@ -8,6 +8,10 @@ use App\Models\ShipDivision;
 use App\Models\ShipDistrict;
 use App\Models\ShipState;
 use App\Models\TempCheckoutData;
+
+// use App\Models\Product;
+use App\Models\Size;
+
 use Carbon\Carbon;
 
 use Auth;
@@ -67,7 +71,27 @@ class CheckoutController extends Controller
 			$data['amount'] = $request->amount + $semenanjung;
 
         $cartTotal = Cart::total();
-        // dd($data);
+        // dd($cartTotal);
+
+		//STOCK CHECK
+        $carts = Cart::content();
+        // $arrayCount = count($carts);
+        // dd($carts);
+        foreach ($carts as $cart) {
+            // $rowIds[] = $cart->qty;
+            $totalQty = Size::where('product_id',$cart->id)->where('size_type',$cart->options->size)->pluck('quantity')->first();
+            $quantity = $cart->qty;
+            
+            if($totalQty < $quantity){
+                $notification = array(
+                    'message' => 'Sorry, we cant continue to Payment. Product you order exceed limit in stock',
+                    'alert-type' => 'error'
+                    );
+
+                    return redirect()->back()->with($notification);
+            }
+        }
+        // dd($totalQty , $quantity);
 
 		TempCheckoutData::insertGetId([
 			// 'id' => increments('id'),
@@ -86,12 +110,12 @@ class CheckoutController extends Controller
             'created_at' => Carbon::now(),
             ]);
 
-    	if ($request->payment_method == 'stripe') {
-    		return view('frontend.payment.stripe',compact('data', 'cartTotal'));
-    	}elseif ($request->payment_method == 'fpx') {
+    	// if ($request->payment_method == 'stripe') {
+    	// 	return view('frontend.payment.stripe',compact('data', 'cartTotal'));
+    	// }elseif ($request->payment_method == 'fpx') {
     		return view('frontend.payment.fpx', compact('data', 'cartTotal', 'shipping_name', 'shipping_email', 'shipping_phone', 'address1', 'address2', 'post_code', 'district', 'state', 'country', 'notes', 'amount'));
-    	}else{
-            return 'cash';
-    	}
+    	// }else{
+        //     return 'cash';
+    	// }
     }// end mehtod.
 }

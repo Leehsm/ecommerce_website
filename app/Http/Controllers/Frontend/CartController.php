@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Size;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Auth;
 use App\Models\Wishlist;
@@ -91,22 +92,27 @@ class CartController extends Controller
 
     public function CouponApply(Request $request){
         $coupon = Coupon::where('coupon_name',$request->coupon_name)->where('coupon_validity','>=',Carbon::now()->format('Y-m-d'))->first();
-        if ($coupon) {
-            Session::put('coupon',[
-                'coupon_name' => $coupon->coupon_name,
-                'coupon_discount' => $coupon->coupon_discount,
-                'discount_amount' => round(Cart::total() * $coupon->coupon_discount/100, 2), 
-                'total_amount' => round(Cart::total() - Cart::total() * $coupon->coupon_discount/100, 2)  
-            ]);
- 
-            return response()->json(array(
-                'validity' => true,
-                'success' => 'Coupon Applied Successfully'
-            ));
-            
+
+        if($coupon){
+            if(Cart::total() >  $coupon->min_spend ){
+                Session::put('coupon',[
+                    'coupon_name' => $coupon->coupon_name,
+                    'coupon_discount' => $coupon->coupon_discount,
+                    'discount_amount' => round(Cart::total() * $coupon->coupon_discount/100, 2), 
+                    'total_amount' => round(Cart::total() - Cart::total() * $coupon->coupon_discount/100, 2)  
+                ]);
+    
+                return response()->json(array(
+                    'validity' => true,
+                    'success' => 'Coupon Applied Successfully'
+                ));
+            }else{
+                return response()->json(['error' => 'Need to spend more than RM'.$coupon->min_spend]);
+            }  
         }else{
             return response()->json(['error' => 'Invalid Coupon']);
-        }
+        }   
+                    
     } // end method 
 
     public function CouponCalculation(){
@@ -133,6 +139,27 @@ class CartController extends Controller
 
     // Checkout Method 
     public function CheckoutCreate(){
+
+        //stock check
+        $carts = Cart::content();
+        // $arrayCount = count($carts);
+        // dd($carts);
+        foreach ($carts as $cart) {
+            // $rowIds[] = $cart->qty;
+            $totalQty = Size::where('product_id',$cart->id)->where('size_type',$cart->options->size)->pluck('quantity')->first();
+            $quantity = $cart->qty;
+            
+            if($totalQty < $quantity){
+                $notification = array(
+                    'message' => 'Item exceed max limit',
+                    'alert-type' => 'error'
+                    );
+
+                    return redirect()->back()->with($notification);
+            }
+        }
+        // dd($totalQty , $quantity);
+
         if (Auth::check()) {
             if (Cart::total() > 0) {
                 $carts = Cart::content();
