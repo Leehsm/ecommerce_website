@@ -20,6 +20,7 @@
                                 <tr>
                                     <th>Coupon Name </th>
                                     <th>Coupon Discount</th>
+                                    <th>Min Spend </th>
                                     <th>Validity </th>
                                     <th>Status </th>
                                     <th>Action</th>
@@ -30,6 +31,7 @@
                                 <tr>
                                     <td> {{ $item->coupon_name }}  </td>
                                     <td> {{ $item->coupon_discount }}% </td>
+                                    <td> RM{{ $item->min_spend }} </td>
                                     <td width="25%">
                                         {{ Carbon\Carbon::parse($item->coupon_validity)->format('D, d F Y') }}
                                     </td>
@@ -83,6 +85,15 @@
                                     <div class="controls">
                                         <input type="text" name="coupon_discount" class="form-control" >
                                         @error('coupon_discount') 
+                                        <span class="text-danger">{{ $message }}</span>
+                                        @enderror 
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h5>Minimun Spend <span class="text-danger">*</span></h5>
+                                    <div class="controls">
+                                        <input type="text" name="min_spend" class="form-control" >
+                                        @error('min_spend') 
                                         <span class="text-danger">{{ $message }}</span>
                                         @enderror 
                                     </div>

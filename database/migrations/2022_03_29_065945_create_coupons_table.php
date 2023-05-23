@@ -18,6 +18,7 @@ class CreateCouponsTable extends Migration
             $table->string('coupon_name');
             $table->integer('coupon_discount');
             $table->string('coupon_validity');
+            $table->string('min_spend');
             $table->integer('status')->default(1);
             $table->timestamps();
         });
